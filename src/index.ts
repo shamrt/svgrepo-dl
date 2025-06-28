@@ -22,11 +22,18 @@ const COLLECTION_NAME = process.env.COLLECTION_NAME || "Unknown Collection";
 const COLLECTION_SLUG = process.env.COLLECTION_SLUG;
 const COLLECTION_PAGE_START = parseInt(process.env.COLLECTION_PAGE_START || "1", 10);
 const COLLECTION_PAGE_END = parseInt(process.env.COLLECTION_PAGE_END || "1", 10);
-const OUTPUT_DIR = process.env.OUTPUT_DIR || "./public/vectors";
+const BASE_OUTPUT_DIR = process.env.OUTPUT_DIR || "./public/vectors";
 
 if (!COLLECTION_SLUG) {
   throw new Error("COLLECTION_SLUG environment variable is required");
 }
+
+if (!COLLECTION_SLUG) {
+  throw new Error("COLLECTION_SLUG environment variable is required");
+}
+
+// Include collection slug in output directory
+const OUTPUT_DIR = join(BASE_OUTPUT_DIR, COLLECTION_SLUG);
 
 if (COLLECTION_PAGE_START > COLLECTION_PAGE_END) {
   throw new Error("COLLECTION_PAGE_START must be less than or equal to COLLECTION_PAGE_END");
