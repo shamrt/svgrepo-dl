@@ -1,3 +1,11 @@
+/**
+ * Script to download SVG icons from a specific SVGRepo collection.
+ * 
+ * Borrows heavily from the original script by @ @alanrsoares
+alanrsoares
+  * @see https://gist.github.com/alanrsoares/2a8eb5688c32e611b9757071a2d5f027
+ */
+
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { load } from "cheerio";
