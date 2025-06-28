@@ -8,6 +8,7 @@ alanrsoares
 
 import { config } from "dotenv";
 import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import { join } from "path";
 import { load } from "cheerio";
 import { range } from "lodash-es";
@@ -23,10 +24,6 @@ const COLLECTION_SLUG = process.env.COLLECTION_SLUG;
 const COLLECTION_PAGE_START = parseInt(process.env.COLLECTION_PAGE_START || "1", 10);
 const COLLECTION_PAGE_END = parseInt(process.env.COLLECTION_PAGE_END || "1", 10);
 const BASE_OUTPUT_DIR = process.env.OUTPUT_DIR || "./public/vectors";
-
-if (!COLLECTION_SLUG) {
-  throw new Error("COLLECTION_SLUG environment variable is required");
-}
 
 if (!COLLECTION_SLUG) {
   throw new Error("COLLECTION_SLUG environment variable is required");
@@ -87,6 +84,14 @@ async function run() {
   console.log(`🔗 Collection slug: ${COLLECTION_SLUG}`);
   console.log(`📄 Processing pages ${COLLECTION_PAGE_START} to ${COLLECTION_PAGE_END} (${COLLECTION_PAGE_END - COLLECTION_PAGE_START + 1} total)`);
   console.log(`📁 Output directory: ${OUTPUT_DIR}`);
+  
+  // Check if output directory already exists
+  if (existsSync(OUTPUT_DIR)) {
+    console.warn(`⚠️  WARNING: Output directory '${OUTPUT_DIR}' already exists!`);
+    console.warn(`   This may overwrite existing files. Exiting to prevent data loss.`);
+    console.warn(`   Please remove the directory or choose a different collection/output path.`);
+    process.exit(1);
+  }
   
   await mkdir(OUTPUT_DIR, { recursive: true });
 
