@@ -20,14 +20,19 @@ const COLLECTION_BASE_URL = "https://www.svgrepo.com/collection";
 // Get collection configuration from environment variables
 const COLLECTION_NAME = process.env.COLLECTION_NAME || "Unknown Collection";
 const COLLECTION_SLUG = process.env.COLLECTION_SLUG;
-const COLLECTION_PAGE_COUNT = parseInt(process.env.COLLECTION_PAGE_COUNT || "1", 10);
+const COLLECTION_PAGE_START = parseInt(process.env.COLLECTION_PAGE_START || "1", 10);
+const COLLECTION_PAGE_END = parseInt(process.env.COLLECTION_PAGE_END || "1", 10);
 const OUTPUT_DIR = process.env.OUTPUT_DIR || "./public/vectors";
 
 if (!COLLECTION_SLUG) {
   throw new Error("COLLECTION_SLUG environment variable is required");
 }
 
-const collectionUrls = range(1, COLLECTION_PAGE_COUNT + 1).map(
+if (COLLECTION_PAGE_START > COLLECTION_PAGE_END) {
+  throw new Error("COLLECTION_PAGE_START must be less than or equal to COLLECTION_PAGE_END");
+}
+
+const collectionUrls = range(COLLECTION_PAGE_START, COLLECTION_PAGE_END + 1).map(
   (page) => `${COLLECTION_BASE_URL}/${COLLECTION_SLUG}/${page}`
 );
 
@@ -73,7 +78,7 @@ async function downloadSVG(url: string, filename: string) {
 async function run() {
   console.log(`📦 Downloading SVGs from collection: ${COLLECTION_NAME}`);
   console.log(`🔗 Collection slug: ${COLLECTION_SLUG}`);
-  console.log(`📄 Processing ${COLLECTION_PAGE_COUNT} pages`);
+  console.log(`📄 Processing pages ${COLLECTION_PAGE_START} to ${COLLECTION_PAGE_END} (${COLLECTION_PAGE_END - COLLECTION_PAGE_START + 1} total)`);
   console.log(`📁 Output directory: ${OUTPUT_DIR}`);
   
   await mkdir(OUTPUT_DIR, { recursive: true });
