@@ -169,4 +169,4 @@ This project borrows heavily from the original script by [@alanrsoares](https://
 
 ## License
 
-ISC License - see package.json for details.
+MIT License - see package.json for details.
