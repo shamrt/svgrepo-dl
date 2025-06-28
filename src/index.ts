@@ -6,21 +6,30 @@ alanrsoares
   * @see https://gist.github.com/alanrsoares/2a8eb5688c32e611b9757071a2d5f027
  */
 
+import { config } from "dotenv";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { load } from "cheerio";
 import { range } from "lodash-es";
 
+// Load environment variables
+config();
+
 const COLLECTION_BASE_URL = "https://www.svgrepo.com/collection";
-const Collection = {
-  name: "Twemoji Emojis",
-  slug: "twemoji-emojis",
-  pageCount: 72,
-};
-const collectionUrls = range(1, Collection.pageCount + 1).map(
-  (page) => `${COLLECTION_BASE_URL}/${Collection.slug}/${page}`
+
+// Get collection configuration from environment variables
+const COLLECTION_NAME = process.env.COLLECTION_NAME || "Unknown Collection";
+const COLLECTION_SLUG = process.env.COLLECTION_SLUG;
+const COLLECTION_PAGE_COUNT = parseInt(process.env.COLLECTION_PAGE_COUNT || "1", 10);
+const OUTPUT_DIR = process.env.OUTPUT_DIR || "./public/vectors";
+
+if (!COLLECTION_SLUG) {
+  throw new Error("COLLECTION_SLUG environment variable is required");
+}
+
+const collectionUrls = range(1, COLLECTION_PAGE_COUNT + 1).map(
+  (page) => `${COLLECTION_BASE_URL}/${COLLECTION_SLUG}/${page}`
 );
-const OUTPUT_DIR = "./public/vectors";
 
 async function fetchHTML(url: string): Promise<string> {
   const res = await fetch(url);
@@ -62,6 +71,11 @@ async function downloadSVG(url: string, filename: string) {
 }
 
 async function run() {
+  console.log(`📦 Downloading SVGs from collection: ${COLLECTION_NAME}`);
+  console.log(`🔗 Collection slug: ${COLLECTION_SLUG}`);
+  console.log(`📄 Processing ${COLLECTION_PAGE_COUNT} pages`);
+  console.log(`📁 Output directory: ${OUTPUT_DIR}`);
+  
   await mkdir(OUTPUT_DIR, { recursive: true });
 
   const allIcons = [] as SVGItem[];
